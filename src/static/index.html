@@ -1,0 +1,221 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>graphql demo</title>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.js"
+            integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+            crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        function learn1(){
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({query: "{ hello }"})
+            })
+            .then(r => r.json())
+            .then(data => console.log('data returned:', data));
+        }
+
+        function learn3() {
+            var dic = 3;
+            var side = 6;
+            var query = `query RollDice($dice: Int, $sides: Int) {
+                      rollDice(numDice: $dice, numSides: $sides)
+                    }`;
+
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: { dice: dic
+                        , sides: side },
+                })
+            })
+            .then(r => r.json())
+            .then(data => console.log('data returned:', data));
+        }
+        function learn4() {
+            var side = 5
+            var time = 3
+            var query = `query getDie($sides: Int, $times: Int!){
+                getDie(numSides: $sides){
+                    rollOnce
+                    roll(numRolls: $times)
+                }
+            }`
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: {
+                        sides: side,
+                        times: time
+                    }
+                })
+            })
+            .then(r => r.json())
+            .then(data => console.log('learn 4 object returned ', data) )
+        }
+
+        function search(){
+            var value = document.querySelector('#searchInput').value
+            var query = `query getMessage($id: ID!) {
+                getMessage(id: $id) {
+                    id
+                    content
+                    author
+                }
+            }`
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: {
+                        id: value
+                    }
+                })
+            })
+            .then(r => r.json())
+            .then(data => console.log('获取messg 返回data ', data))
+        }
+        
+        function addMessage() {
+            var content = document.querySelector('#message_content').value
+            var author = document.querySelector('#message_author').value
+            var query = `mutation CreateMessage($input: MessageInput){
+                createMessage(input: $input) {
+                    id
+                    content
+                    author
+                }
+            }`
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: {
+                        input: {
+                            content,
+                            author
+                        }
+                    }
+                })
+            })
+            .then(r => r.json())
+            .then(data => console.log('新增messge 返回data ', data))
+        }
+
+        function updateMessage() {
+            const id = document.querySelector('#message_id_upate').value
+            const content = document.querySelector('#message_content_upate').value
+            const author = document.querySelector('#message_author_update').value
+
+            var query = `mutation UpdateMessage($id: ID!, $input: MessageInput) {
+                updateMessage(id: $id, input: $input) {
+                    content
+                    author
+                }
+            }`
+
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: {
+                        id,
+                        input: {
+                            content,
+                            author
+                        }
+                    }
+                })
+            })
+            .then(r => r.json())
+            .then(data => console.log('修改messge 返回data ', data))
+        }
+        function deleteMessage() {
+            const id = document.querySelector('#message_id_delete').value
+            var query = `mutation DeleteMessage($id: ID!) {
+                deleteMessage(id: $id){
+                    content
+                    author
+                }
+            }`
+
+            fetch('/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    query,
+                    variables: {
+                        id
+                    }
+                })
+            })
+            .then(r => r.json())
+            .then(data => console.log('删除messge 返回data ', data))
+        }
+    </script>
+</head>
+<body>
+<div>
+    <h1>测试1</h1>
+    <button onclick="learn1()"> 测试1 的button</button>
+    <button onclick="learn3()">测试可传递参数 3 </button>
+    <button onclick="learn4()">测试对象类型 4 </button>
+    <div>
+        <h3>测试查询</h3>
+        <label>请输入id</label>&nbsp&nbsp&nbsp<input id="searchInput">
+        <button onclick="search()">查询</button>
+    </div>
+    <div>
+        <h3>测试新增</h3>
+        <label>请输内容</label><input id="message_content">
+        <label>请输作者</label><input id="message_author">
+        <button onclick="addMessage()">新增</button>
+    </div>
+    <div>
+        <h3>测试修改</h3>
+        <label>请输修改id</label><input id="message_id_upate">
+        <label>请输修改内容</label><input id="message_content_upate">
+        <label>请输修改作者</label><input id="message_author_update">
+        <button onclick="updateMessage()">修改</button>
+    </div>
+    <div>
+        <h3>测试删除</h3>
+        <label>请输删除id</label><input id="message_id_delete">
+        <button onclick="deleteMessage()">删除</button>
+    </div>
+</div>
+</body>
+</html>

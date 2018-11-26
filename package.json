@@ -1,0 +1,23 @@
+{
+  "name": "graphql_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node src/server/server.js"
+  },
+  "keywords": [
+    "graphql"
+  ],
+  "dependencies": {
+    "express": "^4.16.4",
+    "sqlite3": "^4.0.4",
+    "graphql": "^14.0.2",
+    "express-graphql": "^0.7.1",
+    "crypto": "^1.0.1",
+    "sqlite": "^3.0.0"
+  },
+  "author": "gaoyang",
+  "license": "ISC"
+}
